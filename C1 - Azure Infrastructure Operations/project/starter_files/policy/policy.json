@@ -1,0 +1,62 @@
+{
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "metadata": {
+      "createdBy": "19a23a64-cc60-4dfe-8cab-d4e7c6e1fa8e",
+      "createdOn": "2025-04-05T09:20:29.5608756Z",
+      "updatedBy": "19a23a64-cc60-4dfe-8cab-d4e7c6e1fa8e",
+      "updatedOn": "2025-04-05T12:11:02.1888649Z"
+    },
+    "version": "1.0.0",
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the required tag"
+        },
+        "defaultValue": "Environment"
+      },
+      "tagValue": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Value",
+          "description": "Value of the required tag"
+        },
+        "defaultValue": "Production"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allof": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Compute/virtualMachines"
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "notEquals": "[parameters('tagValue')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    },
+    "versions": [
+      "1.0.0"
+    ]
+  },
+  "id": "/subscriptions/0ee6d06f-69ab-4b3b-9f35-003e1b6eb227/providers/Microsoft.Authorization/policyDefinitions/TagsPolicyDefinition",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "TagsPolicyDefinition",
+  "systemData": {
+    "createdBy": "odl_user_276575@udacityhol.onmicrosoft.com",
+    "createdByType": "User",
+    "createdAt": "2025-04-05T09:20:29.5420954Z",
+    "lastModifiedBy": "odl_user_276575@udacityhol.onmicrosoft.com",
+    "lastModifiedByType": "User",
+    "lastModifiedAt": "2025-04-05T12:11:02.1794313Z"
+  }
+}
