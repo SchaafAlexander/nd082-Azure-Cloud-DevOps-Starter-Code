@@ -43,7 +43,7 @@ For this project, I will write a Packer template and a Terraform template to dep
 ### Output
 
 This is the terraform output plan:
-'''
+```
 An execution plan has been generated and is shown below.
 Resource actions are indicated with the following symbols:
   + create
@@ -214,6 +214,4 @@ Terraform will perform the following actions:
           + subnet_id                     = "/subscriptions/0ee6d06f-69ab-4b3b-9f35-003e1b6eb227/resourceGroups/Azuredevops/providers/Microsoft.Network/virtualNetworks/udacity-vnet/subnets/udacity-subnet"
         }
     }
-'''
-
-
+```
