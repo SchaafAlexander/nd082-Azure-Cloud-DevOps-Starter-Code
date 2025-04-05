@@ -4,14 +4,14 @@ provider "azurerm" {
 
 # Use existing Resource Group from Udacity
 data "azurerm_resource_group" "existing" {
-  name = "Azuredevops"
+  name      = "Azuredevops"
 }
 
 
 # Create Virtual Network and Subnet
 resource "azurerm_virtual_network" "udacity" {
   name                = "udacity-vnet"
-  location            = data.azurerm_resource_group.existing.location
+  location            = var.location
   resource_group_name = data.azurerm_resource_group.existing.name
   address_space       = ["10.0.0.0/16"]
 }
@@ -26,7 +26,7 @@ resource "azurerm_subnet" "udacity" {
 # Create Network Security Group
 resource "azurerm_network_security_group" "udacity" {
   name                = "udacity-nsg"
-  location            = data.azurerm_resource_group.existing.location
+  location            = var.location
   resource_group_name = data.azurerm_resource_group.existing.name
 
   security_rule {
@@ -57,7 +57,7 @@ resource "azurerm_network_security_group" "udacity" {
 # Create Public IP
 resource "azurerm_public_ip" "udacity" {
   name                = "udacity-pip"
-  location            = data.azurerm_resource_group.existing.location
+  location            = var.location
   resource_group_name = data.azurerm_resource_group.existing.name
   allocation_method   = "Dynamic"
 }
@@ -65,7 +65,7 @@ resource "azurerm_public_ip" "udacity" {
 # Create Load Balancer
 resource "azurerm_lb" "udacity" {
   name                = "udacity-lb"
-  location            = data.azurerm_resource_group.existing.location
+  location            = var.location
   resource_group_name = data.azurerm_resource_group.existing.name
 
   frontend_ip_configuration {
@@ -83,7 +83,7 @@ resource "azurerm_lb_backend_address_pool" "udacity" {
 # Create Virtual Machine Availability Set
 resource "azurerm_availability_set" "udacity" {
   name                         = "udacity-availability-set"
-  location                     = data.azurerm_resource_group.existing.location
+  location                     = var.location
   resource_group_name          = data.azurerm_resource_group.existing.name
   platform_fault_domain_count  = 2
   platform_update_domain_count = 2
@@ -92,8 +92,9 @@ resource "azurerm_availability_set" "udacity" {
 
 # Create Network Interface
 resource "azurerm_network_interface" "udacity" {
-  name                = "udacity-vm-nic"
-  location            = data.azurerm_resource_group.existing.location
+  count               = var.vm_count
+  name                = "udacity-vm-nic-${count.index}"
+  location            = var.location
   resource_group_name = data.azurerm_resource_group.existing.name
 
   ip_configuration {
@@ -105,8 +106,9 @@ resource "azurerm_network_interface" "udacity" {
 
 # Create Virtual Machines
 resource "azurerm_linux_virtual_machine" "udacity" {
-  name                = "udacity-vm"
-  location            = data.azurerm_resource_group.existing.location
+  count               = var.vm_count
+  name                = "udacity-vm-${count.index}"
+  location            = var.location
   resource_group_name = data.azurerm_resource_group.existing.name
   size                = "Standard_B2s"
   availability_set_id = azurerm_availability_set.udacity.id
@@ -117,7 +119,7 @@ resource "azurerm_linux_virtual_machine" "udacity" {
   disable_password_authentication = false
 
   network_interface_ids = [
-    azurerm_network_interface.udacity.id
+    azurerm_network_interface.udacity[count.index].id
   ]
    
 
