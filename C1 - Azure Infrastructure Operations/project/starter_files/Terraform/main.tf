@@ -54,7 +54,6 @@ resource "azurerm_network_security_group" "udacity" {
   }
 }
 
-
 # Create Public IP
 resource "azurerm_public_ip" "udacity" {
   name                = "udacity-pip"
@@ -93,8 +92,7 @@ resource "azurerm_availability_set" "udacity" {
 
 # Create Network Interface
 resource "azurerm_network_interface" "udacity" {
-  count               = var.vm_count
-  name                = "udacity-vm-nic-${count.index}"
+  name                = "udacity-vm-nic"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
 
@@ -107,10 +105,7 @@ resource "azurerm_network_interface" "udacity" {
 
 # Create Virtual Machines
 resource "azurerm_linux_virtual_machine" "udacity" {
-  depends_on = [azurerm_network_interface.udacity]
-
-  count               = var.vm_count
-  name                = "udacity-vm-${count.index}"
+  name                = "udacity-vm"
   location            = data.azurerm_resource_group.existing.location
   resource_group_name = data.azurerm_resource_group.existing.name
   size                = "Standard_B2s"
@@ -122,9 +117,9 @@ resource "azurerm_linux_virtual_machine" "udacity" {
   disable_password_authentication = false
 
   network_interface_ids = [
-    azurerm_network_interface.udacity[count.index].id
+    azurerm_network_interface.udacity.id
   ]
-
+   
 
   os_disk {
     caching              = "ReadWrite"
